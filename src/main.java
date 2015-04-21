@@ -164,10 +164,10 @@ public class main {
 			String title = matches.get(i+1);
 			String instructor = matches.get(i+2);
 			String schedule = matches.get(i+3);
-//			System.out.println(instructor + " " + course);
+			System.out.println(instructor + " " + course);
 			String[] locs = getSchedule(schedule);
 			for(int j = 0; j < locs.length; j++){
-				System.out.println(locs[j]);
+//				System.out.println(locs[j]);
 				if(locs[j].length() > 0)
 					getCourse(locs[j]);
 			}
@@ -201,12 +201,58 @@ public class main {
 	}
 	
 	public static Course getCourse(String line){
+		final int REGULAR = 0;
+		final int MAKE_UP = 1;
+		final int LAB = 2;
+		
+		String statusStr = "";
+		int status = -1;
 		String day = getDay(line.substring(0,3));
 		int dayInt = getDayInt(line.substring(0,3));
 		System.out.println(day + " " + dayInt);
-		
+		int hoursInt = getHours(line.substring(4,15));
+		System.out.println(hoursInt);
+		String classroom = "";
+		if(line.replace("[", "").length() != line.length()){
+			if(16 < line.length()){
+				classroom = line.substring(16,line.length()-3);
+				statusStr = line.substring(line.length()-3, line.length());
+				System.out.println(getStatusStr(getStatus(statusStr)));
+			}
+				
+				
+		}
+		else{
+			if(16 < line.length()){
+				 line.substring(16, line.length());
+				 System.out.println(getStatusStr(getStatus(statusStr)));
+			}
+		}
+		System.out.println(classroom);
 		
 		return null;
+	}
+	
+	public static int getStatus(String str){
+		switch(str){
+		case "[L]":
+			return 2;
+		case "[S]":
+			return 1;
+		}
+		return 0;
+	}
+		
+	public static String getStatusStr(int status){
+		switch(status){
+		case 0:
+			return "Regular";
+		case 1:
+			return "Make-Up";
+		case 2:
+			return "Lab";
+		}
+		return "";
 	}
 	
 	public static String getDay(String str){
@@ -239,6 +285,14 @@ public class main {
 			return 4;
 		}
 		return -1;
+	}
+	
+	public static int getHours(String str){
+		int sum;
+		int firstInt = Integer.parseInt(str.substring(0,2));
+		int secondInt = Integer.parseInt(str.substring(6,8));
+		firstInt *= 100;
+		return secondInt + firstInt;
 	}
 	
 	public static String[] getSchedule(String schedule){
