@@ -33,6 +33,10 @@ public class Instructor implements Comparator {
 		courses.add(course);
 	}
 	
+	public int numOfCourses(){
+		return courses.size();
+	}
+	
 	public Course getCourse(int index){
 		if(index < courses.size()){
 			return courses.get(index);

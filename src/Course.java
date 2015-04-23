@@ -1,14 +1,14 @@
 
 public class Course {
-	String day;
-	int dayInt;
-	int time;
-	String title;
-	String deptCode;
-	int courseCode;
-	int section;
-	int status;
-	String location;
+	private String day;
+	private int dayInt;
+	private int time;
+	private String title;
+	private String deptCode;
+	private int courseCode;
+	private int section;
+	private int status;
+	private String location;
 	
 	public Course(String deptCode, int courseCode, int section, int dayInt, int time, int status, String location){
 //		this.title = title;
@@ -21,12 +21,28 @@ public class Course {
 		this.location = location;
 	}
 	
-	public void setTitle(String title){
-		this.title = title;
+	public String getDeptCode(){
+		return deptCode;
 	}
 	
-	public String getTitle(){
-		return title;
+	public int getCourseCode(){
+		return courseCode;
+	}
+	
+	public int getSection(){
+		return section;
+	}
+	
+	public int getDayInt(){
+		return dayInt;
+	}
+	
+	public int getTime(){
+		return time;
+	}
+	
+	public int getStatus(){
+		return status;
 	}
 	
 	public void setLocation(String location){

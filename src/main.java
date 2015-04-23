@@ -13,14 +13,14 @@ import java.util.*;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
-import java.sql.Connection;
+	import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
-import com.mysql.jdbc.DatabaseMetaData;
+	import com.mysql.jdbc.DatabaseMetaData;
 import com.mysql.jdbc.Statement;
 
 /**
@@ -38,7 +38,7 @@ import com.mysql.jdbc.Statement;
  */
 
 public class main {
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException {
 		Locale trLocale = Locale.forLanguageTag("tr-TR");
 		Trust trust = new Trust();
 		trust.trustTheSiteGoddammit();
@@ -82,19 +82,25 @@ public class main {
 		addCourses(matched, instructors);
 		Collections.sort(instructors, new Instructor(""));
 		
+		String res = "";
+		
 		BufferedWriter output = new BufferedWriter(new FileWriter(outFile));
 		for(int i = 0; i < instructors.size(); i++)
 		{
 			String cur = instructors.get(i).toString();
 			try {
 	            output.write(cur);
-//	            output.close();
 	        } catch ( IOException e ) {
 	            e.printStackTrace();
 	        }
 		}
 		output.close();
 		
+		Inserter inserter = new Inserter("jdbc:mysql://cgds.me/********", "*******", "***********");
+
+		for(int i = 0; i < instructors.size(); i++){
+			inserter.insertInstructor(instructors.get(i));
+		}
 		
 		
 		Collator collator = Collator.getInstance(trLocale);
@@ -361,6 +367,8 @@ public class main {
 				 classroom = line.substring(16, line.length());
 			}
 		}
+		
+		classroom = classroom.trim();
 		
 		status = (getStatus(statusStr));
 		
