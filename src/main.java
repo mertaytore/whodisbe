@@ -96,15 +96,12 @@ public class main {
 		}
 		output.close();
 		
-		Inserter inserter = new Inserter("jdbc:mysql://cgds.me/********", "*******", "***********");
+		
+		Inserter inserter = new Inserter("jdbc:mysql://****.com/******", "*******", "*********");
 
 		for(int i = 0; i < instructors.size(); i++){
 			inserter.insertInstructor(instructors.get(i));
 		}
-		
-		
-		Collator collator = Collator.getInstance(trLocale);
-		collator.setStrength(Collator.SECONDARY);
 	}
 	
 	public static String getUrlSource(String url) throws IOException 
@@ -409,7 +406,10 @@ public class main {
 			return "Thursday";
 		case "Fri":
 			return "Friday";
+		case "Sat":
+			return "Saturday";
 		}
+		System.out.println("HELELEGIOHSGS " + str);
 		return "";
 	}
 	
@@ -425,7 +425,10 @@ public class main {
 			return 3;
 		case "Fri":
 			return 4;
+		case "Sat":
+			return 5;
 		}
+		System.out.println("HELELEGIOHSGS " + str);
 		return -1;
 	}
 	
