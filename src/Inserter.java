@@ -15,22 +15,21 @@ public class Inserter {
 	String username;
 	String password;
 	String port;
-	String creationQuery = "CREATE TABLE instructor(name VARCHAR(50) NOT NULL, day INTEGER, time INTEGER, deptCode VARCHAR(7),"
-			+ " courseCode INTEGER, section INTEGER, location VARCHAR(20), status INTEGER) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+	String tableName;
+	
 	// short for insertion query! see below for reason why.
-	String[] iq = {"INSERT INTO instructor VALUES('"
-			, "',"
-			, ","
-			, ",'"
-			, "',"
-			,","
-			,",'"
-			,"',"
-			,");"};
-	public Inserter(String url, String username, String password) throws ClassNotFoundException, SQLException{
+	
+	public Inserter(String url, String username, String password, String tableName) throws ClassNotFoundException, SQLException{
+		this.tableName = tableName;
 		this.url = url;
 		this.username = username;
 		this.password = password;
+	}
+	
+	public void begin() throws ClassNotFoundException, SQLException{
+		String creationQuery = "CREATE TABLE "+tableName+"(name VARCHAR(50) NOT NULL, day INTEGER, time INTEGER, deptCode VARCHAR(7),"
+				+ " courseCode INTEGER, section INTEGER, location VARCHAR(20), status INTEGER) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+		
 		Class.forName("com.mysql.jdbc.Driver");
 		con = DriverManager.getConnection(url, username, password);
 		
@@ -45,8 +44,8 @@ public class Inserter {
 		// while resultset still has results this will drop tables if there were any tables to begin with
 		while (rs.next()) {
 		    String curTable = rs.getString("TABLE_NAME");
-		    if(curTable.equals("instructor")){
-		    	stmt.execute("DROP TABLE instructor");
+		    if(curTable.equals(tableName)){
+		    	stmt.execute("DROP TABLE " + tableName);
 			}
 		}
 		
@@ -55,7 +54,22 @@ public class Inserter {
 		stmt.execute(creationQuery);
 	}
 	
-	public void insertInstructor(Instructor instructor) throws SQLException{
+	public void insertInstructor(Instructor instructor) throws SQLException, ClassNotFoundException{
+		Class.forName("com.mysql.jdbc.Driver");
+		con = DriverManager.getConnection(url, username, password);
+		
+		String[] iq = {"INSERT INTO "+tableName+" VALUES('"
+				, "',"
+				, ","
+				, ",'"
+				, "',"
+				,","
+				,",'"
+				,"',"
+				,");"};
+		
+		// I only have a basic idea on how these classes work
+		stmt = con.createStatement();
 		for(int i = 0; i < instructor.numOfCourses(); i++){
 			String query = iq[0] + instructor.getName() + iq[1] + instructor.getCourse(i).getDayInt() + iq[2] +
 					instructor.getCourse(i).getTime() + iq[3] + instructor.getCourse(i).getDeptCode() + iq[4] +

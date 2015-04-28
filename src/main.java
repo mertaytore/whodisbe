@@ -39,19 +39,22 @@ import com.mysql.jdbc.Statement;
 
 public class main {
 	public static void main(String[] args) throws IOException, ClassNotFoundException, SQLException {
+		// set locale to turkish to compare turkish strings
 		Locale trLocale = Locale.forLanguageTag("tr-TR");
+		// trust the website to be connected doesn't mean any harm
 		Trust trust = new Trust();
 		trust.trustTheSiteGoddammit();
+		// arraylist to hold department names
 		ArrayList<String> courses = new ArrayList<String>();
+		// arraylist to hold instructors, this arraylist will be sorted according to the instructor names
 		ArrayList<Instructor> instructors = new ArrayList<Instructor>();
+		// read department codes
 		File file = new File("/Users/dunkucoder/Desktop/input.txt");
-		File outFile = new File("/Users/dunkucoder/Desktop/output.txt");
-		
 		Scanner scan = null;
 		try {
 			scan = new Scanner(file);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("File is not found!");
 		}
 		while(scan.hasNextLine())
 		{
@@ -61,6 +64,7 @@ public class main {
 			}
 		}
 		
+		// html parsing down below. yikes
 		ArrayList<String> matched = new ArrayList<String>();
 		ArrayList<String> urls = new ArrayList<String>();
 		// read html code for the time tables of courses offered by all departments
@@ -84,26 +88,15 @@ public class main {
 		
 		String res = "";
 		
-		BufferedWriter output = new BufferedWriter(new FileWriter(outFile));
-		for(int i = 0; i < instructors.size(); i++)
-		{
-			String cur = instructors.get(i).toString();
-			try {
-	            output.write(cur);
-	        } catch ( IOException e ) {
-	            e.printStackTrace();
-	        }
-		}
-		output.close();
-		
-		
-		Inserter inserter = new Inserter("jdbc:mysql://****.com/******", "*******", "*********");
-
+		// insert all courses into the database
+		Inserter inserter = new Inserter("jdbc:mysql://cgds.me/whodisbe", "root", "treebeard", "instructor");
+		inserter.begin();
 		for(int i = 0; i < instructors.size(); i++){
 			inserter.insertInstructor(instructors.get(i));
 		}
 	}
 	
+	// get the entire html code of the given url
 	public static String getUrlSource(String url) throws IOException 
 	{
         URL link = new URL(url);
@@ -118,6 +111,7 @@ public class main {
 
         return a.toString();
     }
+	
 	
 	public static ArrayList<String> getBetween(String str, String first, String second, ArrayList<String> matches)
 	{
@@ -334,6 +328,12 @@ public class main {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param course	dept&course&section code of a given course e.g. CS421-2
+	 * @param line		is one line of string with all necessary information about that course-- e.g. hours, classroom
+	 * @return
+	 */
 	public static Course getCourse(String course, String line){
 		final int REGULAR = 0;
 		final int MAKE_UP = 1;
@@ -341,6 +341,8 @@ public class main {
 		if(line.length() < 3){
 			return null;
 		}
+		
+		// yikey string operations down below
 		String[] res = course.split(" ");
 		String deptCode = res[0];
 		int courseCode = Integer.parseInt(res[1].substring(0,3));
@@ -409,6 +411,7 @@ public class main {
 		case "Sat":
 			return "Saturday";
 		}
+		// probably not
 		System.out.println("HELELEGIOHSGS " + str);
 		return "";
 	}
@@ -428,6 +431,7 @@ public class main {
 		case "Sat":
 			return 5;
 		}
+		// not very likely to happen
 		System.out.println("HELELEGIOHSGS " + str);
 		return -1;
 	}
@@ -453,18 +457,17 @@ public class main {
 		int first = 0;
 		int second = instructors.size();
 		int pivot = (first+second)/2;
-//		name = prepareToCompare(name);
+
 		while(second > first){
 			if(instructors.get(pivot).getName().equals(name)){
 				return true;
 			}
 			else if(collator.compare(name,instructors.get(pivot).getName()) > 0){
-//				System.out.println(name + " " + instructors.get(pivot).getName() + " " + pivot);
+
 				int cur = pivot;
 				first = pivot;
 				pivot = (first+second)/2;
 				if(pivot == cur){
-//					System.out.println("asd");
 					return false;
 				}
 			}
